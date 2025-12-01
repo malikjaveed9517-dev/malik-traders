@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+</head>
+<body>
+<body onload="loadDashboard()">
+
+  <h2>Welcome, <span id="username"></span></h2>
+  <h3>Balance: PKR <span id="balance"></span></h3>
+
+  <h3>Investment Plans</h3>
+
+  <button onclick="invest(1000, 10)">Plan A — 10% Profit (PKR 1000)</button><br><br>
+  <button onclick="invest(2000, 20)">Plan B — 20% Profit (PKR 2000)</button><br><br>
+  <button onclick="invest(3000, 30)">Plan C — 30% Profit (PKR 3000)</button><br><br>
+
+  <h3 id="message"></h3>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,51 +1,75 @@
-function calculateProfit() {
-    let investment = document.getElementById("investment").value;
-    let rate = document.getElementById("rate").value;
+// SIGNUP
+function signup() {
+    let name = document.getElementById("name").value;
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
 
-    if (investment === "" || rate === "") {
-        alert("Please fill both fields.");
+    if (!name || !email || !password) {
+        alert("Fill all fields!");
         return;
     }
 
-    let profit = (investment * rate) / 100;
+    let user = {
+        name: name,
+        email: email,
+        password: password,
+        balance: 10000   // demo money
+    };
 
-    document.getElementById("result").innerHTML = 
-        "Your profit will be: PKR " + profit;
+    localStorage.setItem("user", JSON.stringify(user));
+    alert("Account created!");
+    window.location.href = "index.html";
 }
 
-// Fake portfolio data (demo)
-const portfolio = [
-  { asset: "Demo Stock A", qty: 10, price: 42.35 },
-  { asset: "Demo Stock B", qty: 5, price: 125.40 },
-  { asset: "Demo ETF X", qty: 20, price: 18.20 }
-];
+// LOGIN
+function login() {
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
 
-function renderPortfolio() {
-  const tbody = document.querySelector("#portfolio-table tbody");
-  tbody.innerHTML = "";
-  let total = 0;
-  portfolio.forEach(item => {
-    const value = item.qty * item.price;
-    total += value;
-    const row = document.createElement("tr");
-    row.innerHTML = `<td>${item.asset}</td><td>${item.qty}</td><td>$${item.price.toFixed(2)}</td><td>$${value.toFixed(2)}</td>`;
-    tbody.appendChild(row);
-  });
-  document.getElementById("total-value").textContent = `Total value: $${total.toFixed(2)}`;
+    let user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+        alert("No account found. Signup first!");
+        return;
+    }
+
+    if (email === user.email && password === user.password) {
+        alert("Login successful!");
+        window.location.href = "dashboard.html";
+    } else {
+        alert("Incorrect email or password");
+    }
 }
 
-function computeFutureValue(P, r_percent, n_years) {
-  const r = r_percent/100;
-  return P * Math.pow(1 + r, n_years);
+// DASHBOARD LOAD
+function loadDashboard() {
+    let user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) return;
+
+    document.getElementById("username").innerHTML = user.name;
+    document.getElementById("balance").innerHTML = user.balance;
 }
 
-document.getElementById("calc-btn").addEventListener("click", () => {
-  const P = parseFloat(document.getElementById("amount").value) || 0;
-  const r = parseFloat(document.getElementById("rate").value) || 0;
-  const n = parseFloat(document.getElementById("years").value) || 0;
-  const fv = computeFutureValue(P, r, n);
-  document.getElementById("calc-result").textContent = `Estimated future value: $${fv.toFixed(2)} (compounded annually)`;
-});
+// INVEST
+function invest(amount, profitPercent) {
+    let user = JSON.parse(localStorage.getItem("user"));
 
-// initial render
-renderPortfolio();
+    if (user.balance < amount) {
+        document.getElementById("message").innerHTML = "Not enough balance!";
+        return;
+    }
+
+    user.balance -= amount;
+
+    let profit = (amount * profitPercent) / 100;
+    user.balance += profit;
+
+    localStorage.setItem("user", JSON.stringify(user));
+
+    document.getElementById("message").innerHTML = 
+        "Investment successful! You earned PKR " + profit;
+
+    document.getElementById("balance").innerHTML = user.balance;
+}
+
